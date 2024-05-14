@@ -1,0 +1,4 @@
+/series-api/.env
+.env
+*.log
+node_modules/
