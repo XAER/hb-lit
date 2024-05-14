@@ -2,6 +2,7 @@ package routes
 
 import (
 	"series-api/controllers"
+	"series-api/middleware"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -10,7 +11,7 @@ import (
 
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
-    r.SetTrustedProxies(nil)
+	r.SetTrustedProxies(nil)
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
@@ -27,6 +28,15 @@ func SetupRouter() *gin.Engine {
 	v1 := r.Group("/api/v1")
 	{
 		v1.GET("/ping", controllers.PingController)
+
+		auth := v1.Group("/auth")
+		{
+			auth.POST("/login", controllers.LoginController)
+		}
+		tv := v1.Group("/tv")
+		{
+			tv.GET("/series", middleware.TokenAuthMiddleware(), controllers.GetSeriesController)
+		}
 	}
 
 	return r
