@@ -1,6 +1,10 @@
 package controllers
 
-import "github.com/gin-gonic/gin"
+import (
+	"strings"
+
+	"github.com/gin-gonic/gin"
+)
 
 func GetSeriesController(c *gin.Context) {
 	// getting the parameters
@@ -13,7 +17,8 @@ func GetSeriesController(c *gin.Context) {
 		page = "0"
 	}
 
-	c.JSON(200, gin.H{
-		"message": "Get series",
-	})
+	accessToken := c.Request.Header.Get("Authorization")
+
+	accessToken = strings.Split(accessToken, "Bearer ")[1]
+
 }

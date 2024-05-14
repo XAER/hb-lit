@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"net/http"
 	"series-api/models"
 	"series-api/series"
@@ -10,45 +11,25 @@ import (
 )
 
 func LoginController(c *gin.Context) {
-	var loginRequestBody models.LoginBodyStruct
+	var loginRequest models.LoginBodyStruct
 
-	if err := c.ShouldBindJSON(&loginRequestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  "KO",
-			"message": err.Error(),
-		})
+	if err := c.ShouldBindJSON(&loginRequest); err != nil {
+		utils.RespondWithError(c, err, http.StatusInternalServerError)
+		return
 	}
 
-	userEmail := loginRequestBody.Email
-	userPassword := loginRequestBody.Password
+	userEmail := loginRequest.Email
+	userPassword := loginRequest.Password
 
 	if userEmail == "" || userPassword == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  "KO",
-			"message": "Email and password are required",
-		})
-	}
-
-	if userEmail == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  "KO",
-			"message": "Email is required",
-		})
-	}
-
-	if userPassword == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  "KO",
-			"message": "Password is required",
-		})
+		utils.RespondWithError(c, errors.New("email and password are required"), http.StatusUnauthorized)
+		return
 	}
 
 	isPasswordCorrect, err := utils.CheckPassword(userPassword)
 	if err != nil || !isPasswordCorrect {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  "KO",
-			"message": err.Error(),
-		})
+		utils.RespondWithError(c, errors.New("the credentials you entered did not match any registered profile"), http.StatusNotFound)
+		return
 	}
 
 	// If password is correct, I have to send a POST request to the Movies/Series API to retrive the bearer token

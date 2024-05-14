@@ -1,7 +1,9 @@
 package middleware
 
 import (
+	"errors"
 	"net/http"
+	"series-api/utils"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -17,20 +19,14 @@ func TokenAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Request.Header.Get("Authorization")
 		if token == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"status": "KO",
-				"error":  "Unauthorized: Token is missing",
-			})
+			utils.RespondWithError(c, errors.New("unauthorized: Token is missing"), http.StatusUnauthorized)
 			c.Abort()
 			return
 		}
 
 		splitToken := strings.Split(token, "Bearer ")
 		if len(splitToken) != 2 {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"status": "KO",
-				"error":  "Unauthorized: Token is invalid",
-			})
+			utils.RespondWithError(c, errors.New("unauthorized: Token is invalid"), http.StatusUnauthorized)
 			c.Abort()
 			return
 		}
