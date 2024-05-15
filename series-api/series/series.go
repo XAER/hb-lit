@@ -21,12 +21,12 @@ func GetSeries(c *gin.Context, page string, accessToken string) {
 	}
 
 	resp, err := http.Get(url)
-	defer resp.Body.Close()
+
 	if err != nil {
 		utils.RespondWithError(c, errors.New("internal server error"), http.StatusInternalServerError)
 		return
 	}
-
+	defer resp.Body.Close()
 	var response models.SeriesResponse
 
 	err = json.NewDecoder(resp.Body).Decode(&response)

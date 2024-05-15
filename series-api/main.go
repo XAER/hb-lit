@@ -5,6 +5,7 @@ import (
 	"log"
 	"series-api/config"
 	"series-api/helpers"
+	"series-api/logger"
 	"series-api/routes"
 
 	"github.com/gin-gonic/gin"
@@ -26,6 +27,7 @@ func initGinServer() {
 
 func main() {
 	initGinServer()
+	logger.InitializeLogger()
 
 	config.App = config.InitializeServices(router, &ginConfig)
 

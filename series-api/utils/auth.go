@@ -7,11 +7,15 @@ import (
 
 func CheckPassword(password string) (bool, error) {
 	// Getting the password from the .env file
-	userPassword := helpers.GetEnv("TEMP_PASSWORD", "password")
+	userPassword := helpers.GetEnv("TEMP_PASSWORD", "error")
 
-	if userPassword == "password" {
+	if userPassword == "error" {
 		return false, errors.New("wrong password")
 	}
+
+	// logger.Printf("Password from .env file: %s\n", userPassword)
+	// logger.Printf("Password from request: %s\n", password)
+
 	if password == userPassword {
 		return true, nil
 	} else {

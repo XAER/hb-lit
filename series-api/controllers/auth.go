@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
+	"series-api/logger"
 	"series-api/models"
 	"series-api/series"
 	"series-api/utils"
@@ -25,6 +27,8 @@ func LoginController(c *gin.Context) {
 		utils.RespondWithError(c, errors.New("email and password are required"), http.StatusUnauthorized)
 		return
 	}
+
+	logger.Info(fmt.Sprintf("user email from request: %s", userEmail))
 
 	isPasswordCorrect, err := utils.CheckPassword(userPassword)
 	if err != nil || !isPasswordCorrect {
